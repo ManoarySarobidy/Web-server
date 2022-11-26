@@ -2,6 +2,7 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.Vector;
+import handler.*;
 public class Server implements Runnable {
 	ServerSocket server;
 	int port;
@@ -42,13 +43,17 @@ public class Server implements Runnable {
 			System.out.println( this.getServer().toString() );
 			while( true ){
 				Socket client = this.getServer().accept();
+				ClientHandler handler = new ClientHandler( client );
 				// this.addClients( client ); 
 				// Mila atao mamorona protocol http averina any aminy
-				String headerHttp = "HTTP/1.1 200  OK\r\n\r\n";
-				// DataOutputStream output = new DataOutputStream( client.getOutputStream() );
-				// output.writeUTF( headerHttp );
-				client.getOutputStream().write(headerHttp.getBytes("UTF-8") );
-				System.out.println( client );
+				String headerHttp = "HTTP/1.1 200  OK\r\n";
+				String contentType = "Content-Type: text/html;charset=UTF-8\n\n";
+				String html = "<html><head></head><body><h2>YESSS SUCCESSS </h2></body></html>";
+				handler.getConnected().getOutputStream().write(headerHttp.getBytes("UTF-8") );
+				handler.getConnected().getOutputStream().write(contentType.getBytes("UTF-8") );
+				handler.getConnected().getOutputStream().write(html.getBytes("UTF-8") );
+				handler.getConnected().getOutputStream().close();
+				// System.out.println( client );
 			}
 
 		}catch( Exception e ){
