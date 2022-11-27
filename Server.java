@@ -5,12 +5,16 @@ import java.util.Vector;
 import handler.*;
 public class Server implements Runnable {
 	ServerSocket server;
+	boolean status;
 	int port;
 	Vector<Socket> clients;
+
+	String defaultFile;
 
 	public Server(){
 		this.setPort( 33005 );
 		this.setClients( new Vector<Socket>() );
+		this.setDefaultFile();
 	}
 	public void setPort( int port ){
 		this.port = port;
@@ -35,30 +39,48 @@ public class Server implements Runnable {
 	public void addClients( Socket socket ){
 		this.getClients().add( socket );
 	}
+	public void setDefaultFile(){
+		this.defaultFile = "./index.html";
+	}
+	public String getDefaultFile(){
+		return this.defaultFile;
+	}
 	public void run(){
 		try{
 			this.setServer( new ServerSocket( this.getPort() ) );
 			this.getServer().setReuseAddress(true);
-			System.out.println( "Serveur Demarer" );
-			System.out.println( this.getServer().toString() );
+			
 			while( true ){
-				Socket client = this.getServer().accept();
+				Socket client = null;
+				try{
+					client = this.getServer().accept();
+				}catch(Exception e){
+					throw new Exception("Can't accept client connection");
+				}
+				String defaultContent = readDefaultFile();
 				ClientHandler handler = new ClientHandler( client );
-				// this.addClients( client ); 
-				// Mila atao mamorona protocol http averina any aminy
-				String headerHttp = "HTTP/1.1 200  OK\r\n";
-				String contentType = "Content-Type: text/html;charset=UTF-8\n\n";
-				String html = "<html><head></head><body><h2>YESSS SUCCESSS </h2></body></html>";
-				handler.getConnected().getOutputStream().write(headerHttp.getBytes("UTF-8") );
-				handler.getConnected().getOutputStream().write(contentType.getBytes("UTF-8") );
-				handler.getConnected().getOutputStream().write(html.getBytes("UTF-8") );
-				handler.getConnected().getOutputStream().close();
-				// System.out.println( client );
+				new Thread( handler ).start();
 			}
 
 		}catch( Exception e ){
+			e.printStackTrace();
 			System.out.println(e);
 		}
+	}
+	
+	public String readDefaultFile() throws IOException{
+		FileInputStream file = new FileInputStream( this.getDefaultFile() );
+		InputStreamReader input = new InputStreamReader( file );
+		BufferedReader reader = new BufferedReader( input );
+		String in = null;
+		String response = null;
+		while( ( in = reader.readLine() ) != null ){
+			response += in;
+		}
+		reader.close();
+		input.close();
+		file.close();
+		return response;
 	}
 
 }
