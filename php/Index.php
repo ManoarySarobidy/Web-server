@@ -12,7 +12,7 @@
 
 	<?php
 
-		echo sayHello();
+		echo $_POST['name'];
 	?>
 	
 </body>

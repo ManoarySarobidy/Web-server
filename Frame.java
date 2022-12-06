@@ -69,7 +69,7 @@ public class Frame extends JFrame implements Runnable{
         return this.listener;
     }
     public void setServerListener(){
-        this.server = new ServerListener( this.getFramePanel() );
+        this.server = new ServerListener( this );
     }
     public ServerListener getServerListener(){
         return this.server;

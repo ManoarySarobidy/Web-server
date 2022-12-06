@@ -1,19 +1,23 @@
 package file;
 import java.io.*;
-
+import java.nio.file.*;
 public class FileHandler{
 	String defaultPath ;
 	String defaultFileName;
 	String NOT_FOUND ;
 	String requestFile;
+	File script;
+	String datas;
 
 	public FileHandler(){
 		this.setDefaultPath();
 		this.setNotFound();
+		this.setRequestFile(this.getNotFound());
 	}
 	public FileHandler( String file ){
 		this.setDefaultPath();
 		this.setNotFound();
+		this.setScript();
 		this.setRequestFile( this.getDefaultPath() + file );
 	}
 
@@ -21,7 +25,6 @@ public class FileHandler{
 	
 	public String readFile( ) throws Exception{
 		FileInputStream file = null;
-		System.out.println( this.getRequestFile() );
 		if( this.getRequestFile().equalsIgnoreCase("/") ){
 			this.setRequestFile( this.getRequestFile() + "index.html" );
 			file = new FileInputStream( this.getRequestFile() );
@@ -46,14 +49,43 @@ public class FileHandler{
 		// jereko hoe miexiste ve ilay .html
 		if( file1.exists() ){
 			this.setRequestFile( this.getRequestFile() + "index.html" );
-			System.out.println( this.getRequestFile() );	
 			return;
 		}
 		if( file2.exists() ){
 			this.setRequestFile( this.getRequestFile() + "index.php" );	
-			System.out.println( this.getRequestFile() );	
 			return;
 		}
+	}
+
+	public void addScript() throws Exception{
+		File tempScript = this.getScript();
+		File tempFile = new File("./temp/tempFile.tmp");
+		File requested = new File(this.getRequestFile());
+		Files.createFile(tempFile.toPath());
+		try{
+			this.writeTo( tempFile , script );
+			this.writeTo( tempFile , requested );
+			this.setRequestFile("./temp/tempFile.tmp");
+		}catch (Exception e) {
+			// System.out.println(e);
+			e.printStackTrace();
+		}
+	}
+
+	public void writeTo( File toWrite , File toRead) throws Exception{
+		FileOutputStream wri = new FileOutputStream(toWrite , true);
+		FileInputStream inp = new FileInputStream(toRead);
+		PrintWriter writter = new PrintWriter( wri );
+		InputStreamReader read = new InputStreamReader(inp );
+		BufferedReader reader = new BufferedReader(read);
+		BufferedWriter writer = new BufferedWriter(writter);
+		String line = null;
+		while( (line = reader.readLine()) != null ){
+			System.out.println(line);
+			writer.write( line );
+		}
+		reader.close();
+		writer.close();
 	}
 
 	public String checkExist() throws Exception{
@@ -85,6 +117,8 @@ public class FileHandler{
 			throw new IOException("Not a valid file : " + this.getRequestFile());
 		}
 		if( extension.equalsIgnoreCase("php") ){
+			this.addScript();
+			System.out.println(this.getRequestFile());
 			return readPhpFile();
 			
 		}else if( extension.equalsIgnoreCase("html") ){
@@ -97,13 +131,16 @@ public class FileHandler{
 	 * Read php file from cli
 	 * */
 
+	 // ito mbola mila parsena ilay requestFile azahoana ilay liste d'argument raha sendra ka GET ilay methode
+
 	public String readPhpFile() throws Exception{
-		Process process = Runtime.getRuntime().exec("php " + this.getRequestFile());
+		Process process = Runtime.getRuntime().exec("php " + this.getRequestFile() + " " + this.getData());
 		InputStream stream = process.getInputStream();
 		String valiny = this.read(stream); 
 		return valiny;
 	}
 
+	
 	// read from inputStream
 
 	public String read( InputStream stream ) throws Exception{
@@ -120,6 +157,13 @@ public class FileHandler{
 		return valiny;
 	}
 
+	public void setDatas( String datas ){
+		this.datas = datas;
+	}
+
+	String getData(){
+		return this.datas;
+	}
 
 	void setRequestFile(String path){
 		this.requestFile = path;
@@ -139,6 +183,12 @@ public class FileHandler{
 	}
 	String getNotFound(){
 		return this.NOT_FOUND;
+	}
+	void setScript(){
+		this.script = new File( "./script.php" );
+	}
+	File getScript(){
+		return this.script;
 	}
 	// mila manao fonction readFile
 }
