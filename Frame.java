@@ -11,6 +11,7 @@ public class Frame extends JFrame implements Runnable{
     // Variables declaration - do not modify                     
     FramePanel panel;
     ClientActionListener listener;
+
     ServerListener server;
     // End of variables declaration
 
@@ -25,8 +26,6 @@ public class Frame extends JFrame implements Runnable{
         this.pack();
         this.setClientListener();
         this.setServerListener();
-        this.addMouseListener( this.getClientListener() );
-        this.addMouseListener( this.getServerListener() );
         this.setButtonsListener();
         this.setResizable(false);
         this.setLocationRelativeTo(null);

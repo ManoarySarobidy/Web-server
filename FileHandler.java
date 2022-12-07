@@ -58,16 +58,16 @@ public class FileHandler{
 	}
 
 	public void addScript() throws Exception{
+		String temporaryFile = "./temp/tempFile.tmp";
 		File tempScript = this.getScript();
-		File tempFile = new File("./temp/tempFile.tmp");
 		File requested = new File(this.getRequestFile());
-		Files.createFile(tempFile.toPath());
+		this.createTempFile(temporaryFile);
+		File tempFile = new File(temporaryFile);
 		try{
 			this.writeTo( tempFile , script );
 			this.writeTo( tempFile , requested );
-			this.setRequestFile("./temp/tempFile.tmp");
+			this.setRequestFile(temporaryFile);
 		}catch (Exception e) {
-			// System.out.println(e);
 			e.printStackTrace();
 		}
 	}
@@ -81,7 +81,6 @@ public class FileHandler{
 		BufferedWriter writer = new BufferedWriter(writter);
 		String line = null;
 		while( (line = reader.readLine()) != null ){
-			System.out.println(line);
 			writer.write( line );
 		}
 		reader.close();
@@ -93,8 +92,16 @@ public class FileHandler{
 			File file = new File( this.getRequestFile() );
 			return checkExtension();
 		}catch( Exception files ){
+			files.printStackTrace();
 			this.setRequestFile( this.getNotFound() );
 			return readFile();
+		}
+	}
+
+	public void createTempFile( String path ) throws Exception{
+		File temp = new File(path);
+		if( !temp.exists() ){
+			Files.createFile(temp.toPath());
 		}
 	}
 
@@ -118,7 +125,6 @@ public class FileHandler{
 		}
 		if( extension.equalsIgnoreCase("php") ){
 			this.addScript();
-			System.out.println(this.getRequestFile());
 			return readPhpFile();
 			
 		}else if( extension.equalsIgnoreCase("html") ){
@@ -137,6 +143,7 @@ public class FileHandler{
 		Process process = Runtime.getRuntime().exec("php " + this.getRequestFile() + " " + this.getData());
 		InputStream stream = process.getInputStream();
 		String valiny = this.read(stream); 
+		this.deleteTempFile();
 		return valiny;
 	}
 
@@ -155,6 +162,12 @@ public class FileHandler{
 		streamReader.close();
 		stream.close();
 		return valiny;
+	}
+
+	void deleteTempFile() throws Exception{
+		String temp = "./temp/tempFile.tmp";
+		File file = new File(temp);
+		Files.deleteIfExists(file.toPath());
 	}
 
 	public void setDatas( String datas ){
@@ -190,5 +203,5 @@ public class FileHandler{
 	File getScript(){
 		return this.script;
 	}
-	// mila manao fonction readFile
+
 }

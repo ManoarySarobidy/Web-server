@@ -120,8 +120,7 @@ public class ClientHandler implements Runnable{
 
 	public void traitement() throws Exception{
 		try{
-			// this.getBuffer().mark(0);
-			// BufferedReader readerin = new BufferedReader(new InputStreamReader(this.getConnected().getInputStream()));
+			
 			String firstLine = this.getBuffer().readLine();
 			String method = getHeaderMethod( firstLine );
 			String url = getUrl( firstLine );
@@ -175,13 +174,16 @@ public class ClientHandler implements Runnable{
 	}
 
 	void writeContent() throws Exception{
-		
 		OutputStream out = this.getConnected().getOutputStream();
-		out.write( this.getHttpHeader().getBytes("UTF-8") );
-		out.write( this.getHttpContent().getBytes("UTF-8") );
-		out.write( this.getMessage().getBytes("UTF-8") );
-		out.flush(); 	
-		// out.close();
+		try{
+			out.write( this.getHttpHeader().getBytes("UTF-8") );
+			out.write( this.getHttpContent().getBytes("UTF-8") );
+			out.write( this.getMessage().getBytes("UTF-8") );
+			out.flush(); 	
+			// out.close();
+		}catch(Exception e){
+			out.close();
+		}
 	}
 	
 }

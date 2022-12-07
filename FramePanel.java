@@ -1,8 +1,11 @@
 package frame;
+
 import javax.swing.*;
 import java.awt.*;
 import listener.*;
+
 public class FramePanel extends JPanel{
+
 	JLabel appName, jLabel1, jLabel2, jLabel4, status;
     JPanel applicationName, buttons, clientAction, footer, server, serverInfo, serverStatus;
     JButton folderButton, startButton, stopButton, webButton;
@@ -19,13 +22,16 @@ public class FramePanel extends JPanel{
         this.initPanels();
         this.initButtons();
         this.setStart( false );
+        this.alternateButtons();
         this.initLabels();
     }
 
     /**
      *  call all init* function 
      *  @return void
+     * 
      * */
+
     public void initComponents(){
         this.initApplicationPanel();
         this.initButtonsPanel();
@@ -66,6 +72,7 @@ public class FramePanel extends JPanel{
     public void update(){
         this.getStatus().setText( "" );
         this.getStatus().setText( "Server Status : " + (( this.isStarted() ) ? "connected" : "disconnected") );
+        this.alternateButtons();
         this.repaint();
     }
 

@@ -16,11 +16,7 @@ public class ClientActionListener extends MouseAdapter{
 	}
 
 	public void mouseClicked( MouseEvent e ){
-		
 		// testeko ny nom de boutton na ny texte ao anatiny
-		
-		System.out.println("HAhAHAHAHAHAH");
-
 		if( e.getSource() instanceof JButton ){
 			if( ((JButton) e.getSource()).getText().equalsIgnoreCase("Open web Browser")  ){
 				try{
@@ -29,6 +25,13 @@ public class ClientActionListener extends MouseAdapter{
 					desktop.browse(localhost);
 				}catch(Exception exception){
 					exception.printStackTrace();
+				}
+			}else if( ((JButton) e.getSource()).getText().equalsIgnoreCase("Open root folder") ){
+				try{
+					Runtime runtime = Runtime.getRuntime();
+					runtime.exec("open ./php/");
+				}catch(Exception ex){
+					ex.printStackTrace();
 				}
 			}
 		}

@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Test pge PHP</title>
+	<title>Test page PHP</title>
 </head>
 <body>
 

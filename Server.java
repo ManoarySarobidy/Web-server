@@ -55,21 +55,16 @@ public class Server implements Runnable {
 			
 			while( true ){
 				Socket client = null;
-				try{
-					client = this.getServer().accept();
-					ClientHandler handler = new ClientHandler( client );
-					this.addClients(handler);
-					for( int i = 0 ; i < this.getClients().size() ; i++ ){
-						new Thread( this.getClients().get(i) ).start();
-					}
-				}catch(Exception e){
-					throw new Exception("Can't accept client connection");
-				}
+				client = this.getServer().accept();
+				ClientHandler handler = new ClientHandler( client );
+				this.addClients(handler);
+				Thread handle = new Thread(handler);
+				handle.start();
+				
 			}
 
 		}catch( Exception e ){
-			e.printStackTrace();
-			System.out.println(e);
+			System.out.println("Server is closed");
 		}
 	}
 
