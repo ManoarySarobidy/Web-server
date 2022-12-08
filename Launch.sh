@@ -4,6 +4,7 @@
 # si oui je set un environement de variable a mon bin pour que le php soit valable n'import où
 # En notant que ce php sera juste temporaire
 
+# misy php ve le olona
 if ! [ -x "$( command -v php  )" ]; then
 	echo 'Error : php is not installed .' >&2
 	exit 1

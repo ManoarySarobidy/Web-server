@@ -9,16 +9,20 @@ public class FileHandler{
 	File script;
 	String datas;
 
+	String defaultDirectory;
+
 	public FileHandler(){
 		this.setDefaultPath();
 		this.setNotFound();
 		this.setRequestFile(this.getNotFound());
+		this.setDefaultDirectory();
 	}
 	public FileHandler( String file ){
 		this.setDefaultPath();
 		this.setNotFound();
 		this.setScript();
 		this.setRequestFile( this.getDefaultPath() + file );
+		this.setDefaultDirectory();
 	}
 
 	// read simple html file
@@ -100,8 +104,9 @@ public class FileHandler{
 
 	public void createTempFile( String path ) throws Exception{
 		File temp = new File(path);
-		if( !temp.exists() ){
+		if( !Files.exists(temp.toPath()) ){
 			Files.createFile(temp.toPath());
+			// return;
 		}
 	}
 
@@ -128,6 +133,8 @@ public class FileHandler{
 			return readPhpFile();
 			
 		}else if( extension.equalsIgnoreCase("html") ){
+			return readFile();
+		}else if( extension.equalsIgnoreCase("ico") ){
 			return readFile();
 		}
 		throw new IOException("Not a valid file : " + this.getRequestFile());
@@ -202,6 +209,13 @@ public class FileHandler{
 	}
 	File getScript(){
 		return this.script;
+	}
+
+	void setDefaultDirectory(){
+		this.defaultDirectory = "./php";
+	}
+	String getDefaultDirectory(){
+		return this.defaultDirectory;
 	}
 
 }

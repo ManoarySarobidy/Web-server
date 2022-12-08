@@ -10,10 +10,16 @@
 </head>
 <body>
 
-	<?php
+	<h2>
+		
+		Bienvenue : 
+		<?php
 
-		echo $_POST['name'];
-	?>
+			echo $_POST['name'];
+		?>
+
+	</h2>
+	
 	
 </body>
 </html>
