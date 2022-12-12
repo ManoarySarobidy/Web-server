@@ -1,24 +1,32 @@
 <?php
-	include 'function.php';
+	// include 'function.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="style.css">
 	<title>Test page PHP</title>
+	
 </head>
 <body>
 
 	<h2>
 		
 		Bienvenue : 
-		<?php
+		<div class="red" style="color: red;">
+				le reel :
+				<p class="text-black">
+					<?php
+						echo $_POST['name']; 
+					?>
+				</p>
 
-			echo $_POST['name'];
-		?>
+		</div>
 
 	</h2>
+		<img src="haha.jpg" alt="haha">
 	
 	
 </body>
