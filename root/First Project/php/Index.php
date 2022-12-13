@@ -20,6 +20,7 @@
 				<p class="text-black">
 					<?php
 						echo $_POST['name']; 
+						
 					?>
 				</p>
 

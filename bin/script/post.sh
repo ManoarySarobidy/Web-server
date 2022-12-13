@@ -7,7 +7,8 @@
 # $4 is the data-get
 
 # Used just to throw error
-
+# mila avadika aloha ilay SRC_DIR REO
+# asiana specificité ilay nom de dossier
 # Script to run a php post file via the cgi and see the result
 
 GATEWAY_INTERFACE=CGI/1.1

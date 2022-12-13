@@ -34,7 +34,7 @@ public class FileHandler{
 		this.setNotFound();
 		this.setScript();
 		this.setDefaultDirectory();
-		this.setRequestFile( this.getDefaultDirectory() + file );
+		this.setRequestFile( this.getDefaultDirectory() + file.replace("%20" , " ") );
 	}
 
 	public String getExtension(){
@@ -64,54 +64,78 @@ public class FileHandler{
 		return "Content-Type: text/html; charset=UTF-8;";
 	}
 
-	// omena azy ny lien absolu
-
-	public String createHtmlPage( String title , String body ){
-		// misy css par defaut izay ao anatin'ny defaul.css
-		String html = "<!DOCTYPE html>\n";
-		html = html.concat("<html>\n");
-		html = html.concat("<head>\n");
-		html = html.concat("<meta charset='UTF-8' />\n");
-		html = html.concat("<link rel=\"stylesheet\" href=\"" + this.getDefaultDirectory() + "/default/dist/css/bootstrap.min.css\" />\n");
-		html = html.concat("<link rel=\"stylesheet\" href=\"" + this.getDefaultDirectory() + "/default/css/default.css\" />\n");
-		html = html.concat("<title>" + title + " </title>\n");
-		html = html.concat("</head>\n");
-		html = html.concat("<body>\n");
-		html = html.concat("<div class=\"container\">");
-		html = html.concat("<h2 class=\"text-center text-decoration-underline\">Welcome to the local web project</h2>");
-		html = html.concat( body + "\n" );
-		html = html.concat("<footer class=\"footer border text-secondary fs-2\"> Made by ITU 002032 (En developpement) </footer>");
-		html = html.concat("</div>");
-		html = html.concat("</body>\n");
-		html = html.concat("</html>\n");
-		return html;
+	String directoryContent(){
+		String content = "<h2 class=\"text-center text-decoration-underline\"> Index </h2>";
+		content += this.createFolderLink();
+		return content;
 	}
+
+	void createPage( String title , String content ) throws Exception{
+		try{
+			FileInputStream template = new FileInputStream("../no-content.html");
+			FileOutputStream temp = new FileOutputStream("../temp.tmp",true);
+			BufferedReader reader = new BufferedReader( new InputStreamReader( template ) );
+			this.createTempFile("../temp.tmp");
+			BufferedWriter writer = new BufferedWriter( new PrintWriter( temp ) );
+			String s = null;
+			while( (s = reader.readLine()) != null ){
+				if( s.contains("<title>") ) s += title;
+				if( s.contains("row contents") ) s += content;
+				writer.write(s);
+			}
+			reader.close();
+			writer.close();
+		}catch (Exception e) {
+			System.out.println(" Erreur dans la fonction : createErrorPage() =>> " + e.getMessage());
+		}
+	}
+	
+	byte[] readErrorPage() throws Exception{
+		this.createPage("Error" , errorToHtml());
+		this.setRequestFile("../temp.tmp");
+		byte[] file = this.readFile();
+		this.deleteTempFile();
+		return file;
+	}	
+
+	String errorToHtml() throws Exception{
+		BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( "../src/exception/phpError.html" ) ) );
+		String e = null;
+		String valiny = "<table class=\"table text-white\"> ";
+		while( (e = reader.readLine()) != null ){
+			String tr = "<tr><td>" + e + "</td></tr>";
+			valiny += tr;
+		}
+		valiny += "</table>";
+		return valiny;
+	}
+
 	// create the folder temp
 	String createFolderLink(){
+		this.setRequestFile(this.getRequestFile().replace("%20"," "));
 		File file = new File(this.getRequestFile());
 		File[] files = file.listFiles();
 		String list = "";
 		for( File f : files ){
+			if( !f.isHidden() ){
+				String div = "<div class=\"links " + ((f.isDirectory()) ? "directory" : "file") + "\">";
+				div += "<a href=./" + this.escape(f.getName()) + ((f.isDirectory()) ? "/" : "") + ">" + f.getName() + "</a>";
+				div += "</div>";
+				list+= div;
 
-			String div = "<div class=\"links " + ((f.isDirectory()) ? "directory" : "file") + "\">";
-			div += "<a href=./" + f.getName() + ((f.isDirectory()) ? "/" : "") + ">" + f.getName() + "</a>";
-			div += "</div>";
-			// list.add(a);
-			list+= div;
+			}
 		}
 		return list;
 	}
 
+	String escape(String toEscape){
+		return toEscape.replace(" ","%20");
+	}
+
 	void readDirectory() throws Exception{
 		try{
-			File file = new File("../src/temp/directory.html");
-			String files = createFolderLink();
-			String complete = createHtmlPage("List directories",files);
-			this.createTempFile(file.getPath());
-			PrintWriter writer = new PrintWriter(file);
-			writer.write(complete);
-			writer.close();
-			this.setRequestFile("../src/temp/directory.html");
+			this.createPage("List directories" , directoryContent());
+			this.setRequestFile("../temp.tmp");
 		}catch (Exception e) {
 			throw new Exception("Error while reading directories : " + e.getMessage());
 		}
@@ -122,7 +146,8 @@ public class FileHandler{
 	
 	public byte[] readFile( ) throws Exception{
 		FileInputStream file = null;
-		if( isDirectory() ){ //izany hoe dossier ilay izy
+		boolean b = addDefaultFile();
+		if( isDirectory() && b ){ //izany hoe dossier ilay izy
 			this.readDirectory();
 		}
 		file = new FileInputStream( this.getRequestFile() );
@@ -132,7 +157,6 @@ public class FileHandler{
 	}
 
 	public byte[] traitement() throws Exception{
-		System.out.println(this.getRequestFile());
 		if( this.getRequestFile().endsWith("/") ){
 			return this.checkExtension();
 		}else{
@@ -140,17 +164,18 @@ public class FileHandler{
 		}
 	}
 
-	public void addDefaultFile(){ // for a folder
+	public boolean addDefaultFile(){ // for a folder
 		File file1 = new File( this.getRequestFile() + "index.html" );
 		File file2 = new File( this.getRequestFile() + "index.php" );
-		// jereko hoe miexiste ve ilay .html
 		if( file1.exists() ){
 			this.setRequestFile( this.getRequestFile() + "index.html" );
-			return;
+			return false;
 		}
-		if( file2.exists() ){
+		else if( file2.exists() ){
 			this.setRequestFile( this.getRequestFile() + "index.php" );	
-			return;
+			return false;
+		}else{
+			return true;
 		}
 	}
 
@@ -193,13 +218,6 @@ public class FileHandler{
 		}
 	}
 
-	public void createTempFile( String path ) throws Exception{
-		File temp = new File(path);
-		if( !Files.exists(temp.toPath()) ){
-			Files.createFile(temp.toPath());
-		}
-	}
-
 	public byte[] checkExtension() throws Exception{
 		String[] splitted = this.getRequestFile().split("\\.");
 		String extension = splitted[ splitted.length - 1 ];
@@ -208,7 +226,7 @@ public class FileHandler{
 		}
 		if( extension.equalsIgnoreCase("php") ){
 			this.extractError();
-			if( this.error() ) return readError();
+			if( this.error() ) return readErrorPage();
 			return readPhpFile();
 			
 		}else if( isHtmlOrCss() || isImage() || isDirectory() || isDocument() ){
@@ -217,6 +235,7 @@ public class FileHandler{
 		throw new IOException("Not a valid file : " + this.getRequestFile());
 	}
 
+// type part
 	boolean isDirectory(){
 		return this.getRequestFile().endsWith("/");
 	}
@@ -236,10 +255,7 @@ public class FileHandler{
 		return ex.equalsIgnoreCase("ico") || ex.equalsIgnoreCase("jpg") || ex.equalsIgnoreCase("png") || ex.equalsIgnoreCase("gif") || ex.equalsIgnoreCase("jpeg") ;
 	}
 
-	/**
-	 * Read php file from cli
-	 * */
-
+// php part
 	public byte[] readPhpFile() throws Exception{
 		this.addScript();
 		Process process = Runtime.getRuntime().exec("php -f " + this.getRequestFile() + " " + this.getData() );
@@ -249,35 +265,25 @@ public class FileHandler{
 		return valiny;
 	}
 
+// error part
 	public void extractError() throws Exception{
 		try{
 			String[] commands = { "./script/post.sh" , this.getMethod() , this.getRequestFile().substring(3) , this.getPostData() , this.getGetData() };
 			ProcessBuilder builder = new ProcessBuilder(commands);
 			builder.start().waitFor();
-			System.out.println( new String().join(" ", commands) );
 		}catch(Exception ex){
 			ex.printStackTrace();
 			throw ex;
 		}
 
 	}
-
-	public byte[] readError() throws Exception{
-		this.setRequestFile("../src/exception/phpError.html");
-		byte[] error = readFile();
-		this.deleteTempFile();
-		return error; 
-	}
-
+	
 	public boolean error(){
 		File phpError = new File("../src/exception/phpError.html");
-		System.out.println(Files.exists(phpError.toPath()));
-		System.out.println(phpError.length());
 		return Files.exists(phpError.toPath()) && phpError.length() > 0;
 	}
 
-	// read from inputStream
-
+// read from inputStream Part
 	public byte[] read( InputStream stream ) throws Exception{
 		File file = new File(this.getRequestFile());
 		long len = file.length();
@@ -289,15 +295,25 @@ public class FileHandler{
 		return response;
 	}
 
+// file manipulation part
+	public void createTempFile( String path ) throws Exception{
+		File temp = new File(path);
+		if( !Files.exists(temp.toPath()) ){
+			Files.createFile(temp.toPath());
+		}
+	}
 	void deleteTempFile() throws Exception{
 		String exception = this.getDefaultDirectory()+"/src/exception/phpError.html";
 		deleteTemp();
 		File ex = new File(exception);
+		File e = new File("../temp.tmp");
 		Files.deleteIfExists(ex.toPath());
+		Files.deleteIfExists(e.toPath());
 	}
 
 	void deleteTemp() throws Exception{
 		String directory = "../src/temp/";
+		// String directory = "../src/temp/";
 		File file = new File(directory);
 		File[] files = file.listFiles();
 		for(File f : files){
@@ -307,7 +323,7 @@ public class FileHandler{
 
 // getters and setters
 
-	public void setDatas(  ){
+	public void setDatas( ){
 		this.datas = getPostData() + getGetData();
 	}
 
@@ -363,7 +379,7 @@ public class FileHandler{
 	}
 
 	void setDefaultDirectory(){
-		this.defaultDirectory = "../";
+		this.defaultDirectory = "../root/";
 	}
 	String getDefaultDirectory(){
 		return this.defaultDirectory;
