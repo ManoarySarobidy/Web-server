@@ -1,5 +1,12 @@
 <?php
-	// include 'function.php';
+	$base = mysqli_connect("localhost","sarobidy","manoary","test");
+	$query = "Select * from haha";
+	$query = mysqli_query( $base , $query );
+	$val = array();
+	while( $v = mysqli_fetch_assoc($query) ){
+		$val[] = $v;
+	}
+	var_dump($val);
 ?>
 <!DOCTYPE html>
 <html lang="en">

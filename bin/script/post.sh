@@ -6,9 +6,6 @@
 # $3 is the data-post
 # $4 is the data-get
 
-# Used just to throw error
-# mila avadika aloha ilay SRC_DIR REO
-# asiana specificité ilay nom de dossier
 # Script to run a php post file via the cgi and see the result
 
 GATEWAY_INTERFACE=CGI/1.1
@@ -17,22 +14,18 @@ REDIRECT_STATUS=true
 content=$3
 CONTENT_LENGTH=${#content}
 QUERY_STRING=$4
-SRC_DIR="$HOME/Documents/GitHub/Web-server/src/exception/"
-EX_DIR="$HOME/Documents/GitHub/Web-server/"
+CUR_DIR=$PWD
+PAR_DIR=$(dirname "$CUR_DIR")
+SRC_DIR="$PAR_DIR/src/exception/"
+EX_DIR="$PAR_DIR/root/First Project"
 SCRIPT_FILENAME=$EX_DIR/$2
 SCRIPT_NAME=$0
 
 if [[ $REQUEST_METHOD == "POST" ]]; then
-
 	CONTENT_TYPE=application/x-www-form-urlencoded; charset=UTF-8;
-
 else
-
 	CONTENT_TYPE=text/html; charset=UTF-8;
-
 fi
-
-echo $0
 
 export REDIRECT_STATUS
 export GATEWAY_INTERFACE
@@ -45,9 +38,4 @@ export QUERY_STRING
 export SRC_DIR
 export EX_DIR
 
-echo $content 
-echo $SCRIPT_FILENAME
-echo $content 
-echo $content 
-echo $content 
 echo $content | php-cgi 2> "$SRC_DIR/phpError.html"
