@@ -1,0 +1,83 @@
+#header
+{
+	height: 50px;
+	width: auto;
+	border: solid 1px darkgoldenrod;
+	text-align: center;
+	font-size: 40px;
+	font-family: sans-serif;
+	border-radius: 23px;
+	background-color: royalblue;
+	position: absolute;
+	top: 0;
+
+}
+
+#footer
+{
+	height: 25px;
+	width: 100%;
+	border: 1px solid lightgray;
+	text-align: right;
+	font-family: cursive;
+	border-radius: 24px;
+	background-color: lightgray;
+	position: fixed;
+	padding: 10px 10px 0px 10px;
+	bottom: 0;
+	/*marging-bottom: 1000px;*/
+
+}
+
+#word
+{
+	width: auto;
+	height: 100px;
+	margin: auto;
+	padding: auto;
+	background-color: aqua;
+	border: 1px solid azure;
+	border-radius: 25px;
+}
+
+#input
+{
+	float: left;
+	width: 240px;
+	height: auto;
+	background-color: royalblue;
+	border: 1px solid royalblue;
+	border-radius: 20px;
+}
+
+#pic
+{
+	float: right;
+	width: 240px;
+	height: 240px;
+	border:1px solid chocolate;
+	border-radius: 25px;
+	text-align: center;
+}
+
+td
+{
+	border-top: none;
+	border-right: none ;
+	border-left: none;
+}
+
+table
+{
+	margin: auto;
+	padding: auto;
+	border-style: none;
+}
+
+form
+{
+	margin: auto;
+	padding: auto;
+}
+
+

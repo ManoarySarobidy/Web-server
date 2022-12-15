@@ -6,7 +6,7 @@
 	while( $v = mysqli_fetch_assoc($query) ){
 		$val[] = $v;
 	}
-	var_dump($val);
+	// var_dump($base);
 ?>
 <!DOCTYPE html>
 <html lang="en">

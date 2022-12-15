@@ -6,7 +6,7 @@
 # $3 is the data-post
 # $4 is the data-get
 
-# Script to run a php post file via the cgi and see the result
+# Script to run a php post file via the cgi
 
 GATEWAY_INTERFACE=CGI/1.1
 REQUEST_METHOD=$1
@@ -17,7 +17,7 @@ QUERY_STRING=$4
 CUR_DIR=$PWD
 PAR_DIR=$(dirname "$CUR_DIR")
 SRC_DIR="$PAR_DIR/src/exception/"
-EX_DIR="$PAR_DIR/root/First Project"
+EX_DIR="$PAR_DIR"
 SCRIPT_FILENAME=$EX_DIR/$2
 SCRIPT_NAME=$0
 
@@ -37,5 +37,5 @@ export CONTENT_TYPE
 export QUERY_STRING
 export SRC_DIR
 export EX_DIR
-
+echo $EX_DIR
 echo $content | php-cgi 2> "$SRC_DIR/phpError.html"

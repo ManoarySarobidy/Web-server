@@ -46,7 +46,7 @@ public class ClientHandler implements Runnable{
 				this.setRead(true);
 			}
 		}catch( Exception e ){
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 	}
@@ -71,7 +71,7 @@ public class ClientHandler implements Runnable{
 			this.setHttpContent(handler.getMimeType());
 			this.setServerMessage(handler.traitement());
 		}catch (Exception e) {
-			e.printStackTrace();
+			
 		}
 	}
 
@@ -111,14 +111,11 @@ public class ClientHandler implements Runnable{
 	void writeContent() throws Exception{
 		OutputStream out = this.getConnected().getOutputStream();
 		try{
-			// this.setHttpHeader();
-			// this.setHttpContent();
 			out.write( this.getHttpHeader().getBytes("UTF-8") );
 			out.write( this.getHttpContent().getBytes("UTF-8") );
 			out.write( this.getMessage() , 0 , this.getMessage().length);
 			out.flush(); 	
 		}catch(Exception e){
-			// e.printStackTrace();
 			out.close();
 		}
 	}

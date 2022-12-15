@@ -29,7 +29,7 @@ public class ClientActionListener extends MouseAdapter{
 			}else if( ((JButton) e.getSource()).getText().equalsIgnoreCase("Open root folder") ){
 				try{
 					Runtime runtime = Runtime.getRuntime();
-					runtime.exec("open ./php/");
+					runtime.exec("open ../root/");
 				}catch(Exception ex){
 					ex.printStackTrace();
 				}

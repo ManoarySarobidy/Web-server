@@ -190,7 +190,7 @@ public class FileHandler{
 			this.writeTo( tempFile , requested );
 			this.setRequestFile(temporaryFile);
 		}catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
@@ -212,7 +212,7 @@ public class FileHandler{
 			File file = new File( this.getRequestFile() );
 			return checkExtension();
 		}catch( Exception files ){
-			files.printStackTrace();
+			// files.printStackTrace();
 			this.setRequestFile( this.getNotFound() );
 			return readFile();
 		}
@@ -270,9 +270,10 @@ public class FileHandler{
 		try{
 			String[] commands = { "./script/post.sh" , this.getMethod() , this.getRequestFile().substring(3) , this.getPostData() , this.getGetData() };
 			ProcessBuilder builder = new ProcessBuilder(commands);
-			builder.start().waitFor();
+			Process p = builder.start();
+			p.waitFor();
 		}catch(Exception ex){
-			ex.printStackTrace();
+			// ex.printStackTrace();
 			throw ex;
 		}
 
@@ -313,11 +314,12 @@ public class FileHandler{
 
 	void deleteTemp() throws Exception{
 		String directory = "../src/temp/";
-		// String directory = "../src/temp/";
 		File file = new File(directory);
 		File[] files = file.listFiles();
 		for(File f : files){
-			Files.deleteIfExists(f.toPath());
+			if( !f.getName().contains(".gitignore") ){
+				Files.deleteIfExists(f.toPath());
+			}
 		}
 	}
 
