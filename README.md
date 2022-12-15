@@ -1,4 +1,4 @@
-<h2>Web Server made in Java</h2>
+<h2>Web Server made in Java by ETU 002032</h2>
 Pour utiliser ce programme , pré-requis:
 <ol>
 <li>être sous linux</li>
